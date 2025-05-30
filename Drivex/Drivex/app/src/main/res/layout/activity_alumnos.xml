@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:id="@+id/layoutRaiz"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Campo nombre -->
+        <EditText
+            android:id="@+id/etNombreAlumno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="#DDDDDD"
+            android:hint="Nombre del alumno"
+            android:minHeight="48dp"
+            android:padding="10dp" />
+
+        <!-- Campo apellidos -->
+        <EditText
+            android:id="@+id/etApellidosAlumno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="#DDDDDD"
+            android:hint="Apellidos"
+            android:minHeight="48dp"
+            android:padding="10dp" />
+
+        <!-- Campo DNI -->
+        <EditText
+            android:id="@+id/etDniAlumno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="#DDDDDD"
+            android:hint="DNI"
+            android:minHeight="48dp"
+            android:padding="10dp" />
+
+        <!-- Botón agregar -->
+        <Button
+            android:id="@+id/btnAgregarAlumno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Agregar Alumno"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Lista de alumnos -->
+        <LinearLayout
+            android:id="@+id/listaAlumnosLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+</ScrollView>

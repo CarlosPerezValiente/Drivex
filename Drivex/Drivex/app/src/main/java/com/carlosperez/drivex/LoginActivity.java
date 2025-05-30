@@ -46,13 +46,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                 intent.putExtra("nombreUsuario", usuario.getNombre());
+                intent.putExtra("idUsuario", usuario.getId()); // 🔹 enviamos el ID
                 startActivity(intent);
                 finish();
-
             } else {
                 Toast.makeText(this, "Email o contraseña incorrectos", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         btnIrRegistro.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegistroUsuarioActivity.class);

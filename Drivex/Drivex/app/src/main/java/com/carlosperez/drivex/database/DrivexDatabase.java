@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DrivexDatabase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "drivex.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public DrivexDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

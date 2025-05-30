@@ -5,18 +5,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.carlosperez.drivex.database.DBHelper;
+import com.carlosperez.drivex.database.DrivexDatabase; // ← usa la nueva base de datos
 import com.carlosperez.drivex.model.Usuario;
 
 public class UsuarioDAO {
 
-    private DBHelper dbHelper;
+    private DrivexDatabase dbHelper;
 
     public UsuarioDAO(Context context) {
-        dbHelper = new DBHelper(context);
+        dbHelper = new DrivexDatabase(context);
     }
 
-    // Insertar un usuario en la base de datos
     public boolean insertarUsuario(Usuario usuario) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues valores = new ContentValues();
@@ -26,11 +25,9 @@ public class UsuarioDAO {
 
         long id = db.insert("usuarios", null, valores);
         db.close();
-        return id != -1;  // true si inserción correcta, false si error
-
+        return id != -1;
     }
 
-    // Obtener usuario por email y contraseña (para login)
     public Usuario obtenerUsuario(String email, String contrasena) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] columnas = {"id_usuario", "nombre", "email", "contrasena"};
