@@ -15,7 +15,7 @@
             android:label="@string/title_activity_dashboard"
             android:theme="@style/Theme.Drivex" />
         <activity android:name=".RegistroUsuarioActivity" />
-        <activity android:name=".MainActivity" />
+
         <activity
             android:name=".LoginActivity"
             android:exported="true" >
@@ -26,6 +26,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".AlumnosActivity" />
+        <activity android:name=".HorariosActivity" />
+        <activity android:name=".AgendaActivity" />
+
 
     </application>
 

@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class DashboardActivity extends AppCompatActivity {
 
     private TextView tvBienvenido;
-    private Button btnAlumnos, btnCerrarSesion;
+    private Button btnAlumnos, btnCerrarSesion, btnVerAgenda;
     private int idUsuario;  // 🔹 Para mantener el ID del usuario logueado
 
     @Override
@@ -20,6 +20,7 @@ public class DashboardActivity extends AppCompatActivity {
         tvBienvenido = findViewById(R.id.tvBienvenido);
         btnAlumnos = findViewById(R.id.btnAlumnos);
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+        btnVerAgenda = findViewById(R.id.btnVerAgenda);
 
         // 🔹 Recuperamos nombre e ID del usuario desde LoginActivity
         String nombreUsuario = getIntent().getStringExtra("nombreUsuario");
@@ -35,6 +36,15 @@ public class DashboardActivity extends AppCompatActivity {
             intent.putExtra("idUsuario", idUsuario);
             startActivity(intent);
         });
+
+        btnVerAgenda.setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, AgendaActivity.class);
+            intent.putExtra("idUsuario", idUsuario); // Añadir ID
+            startActivity(intent);
+        });
+
+
+
 
         // 🔹 Cerrar sesión
         btnCerrarSesion.setOnClickListener(v -> {

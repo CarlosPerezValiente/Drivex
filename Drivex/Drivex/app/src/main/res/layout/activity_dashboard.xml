@@ -25,6 +25,11 @@
             android:layout_height="wrap_content"
             android:text="Gestión de Alumnos"
             android:layout_marginBottom="16dp" />
+        <Button
+            android:id="@+id/btnVerAgenda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ver agenda general" />
 
 
         <Button

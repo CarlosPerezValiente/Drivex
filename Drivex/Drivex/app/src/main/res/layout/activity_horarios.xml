@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/etFecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Seleccionar fecha (dd/MM/yyyy)"
+            android:focusable="false"
+            android:clickable="true"
+            android:layout_marginBottom="12dp" />
+
+
+        <!-- Formulario -->
+        <Spinner
+            android:id="@+id/spDiaSemana"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/dias_semana" />
+
+        <EditText
+            android:id="@+id/etHoraInicio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hora de inicio (ej. 10:00)" />
+
+        <EditText
+            android:id="@+id/etHoraFin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hora de fin (ej. 12:00)"
+            android:layout_marginBottom="12dp"/>
+
+        <Button
+            android:id="@+id/btnAgregarHorario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Agregar horario" />
+
+        <!-- Lista de horarios -->
+        <LinearLayout
+            android:id="@+id/contenedorHorarios"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"/>
+    </LinearLayout>
+</ScrollView>

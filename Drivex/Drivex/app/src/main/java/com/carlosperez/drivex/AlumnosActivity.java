@@ -1,5 +1,6 @@
 package com.carlosperez.drivex;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +29,7 @@ public class AlumnosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_alumnos);
 
         // 🔹 Recuperar ID del usuario desde el intent
-        idUsuario = getIntent().getIntExtra("idUsuario", -1);
+        idUsuario = getIntent().getIntExtra("idUsuario", -1);  // 👈 Aquí sin 'int'
 
         if (idUsuario == -1) {
             Toast.makeText(this, "Error: ID de usuario no recibido", Toast.LENGTH_SHORT).show();
@@ -72,14 +73,35 @@ public class AlumnosActivity extends AppCompatActivity {
         });
     }
 
+
     private void cargarListaAlumnos() {
         listaAlumnosLayout.removeAllViews();
-        List<Alumno> alumnos = alumnoDAO.obtenerPorUsuario(idUsuario); // 🔹 Solo alumnos del usuario
+        int idUsuario = getIntent().getIntExtra("idUsuario", -1);
+        List<Alumno> alumnos = alumnoDAO.obtenerPorUsuario(idUsuario);
+
+
         for (Alumno alumno : alumnos) {
+            LinearLayout contenedor = new LinearLayout(this);
+            contenedor.setOrientation(LinearLayout.VERTICAL);
+            contenedor.setPadding(0, 8, 0, 8);
+
             TextView tv = new TextView(this);
             tv.setText(alumno.getNombre() + " " + alumno.getApellidos() + " (" + alumno.getDni() + ")");
-            tv.setPadding(0, 8, 0, 8);
-            listaAlumnosLayout.addView(tv);
+            tv.setTextSize(16);
+
+            Button btnVerHorario = new Button(this);
+            btnVerHorario.setText("Ver horario");
+            btnVerHorario.setOnClickListener(v -> {
+                Intent intent = new Intent(AlumnosActivity.this, HorariosActivity.class);
+                intent.putExtra("idAlumno", alumno.getId());
+                startActivity(intent);
+            });
+
+            contenedor.addView(tv);
+            contenedor.addView(btnVerHorario);
+
+            listaAlumnosLayout.addView(contenedor);
         }
     }
+
 }
