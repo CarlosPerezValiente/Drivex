@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FAFAFA">
 
     <LinearLayout
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -14,11 +15,14 @@
             android:id="@+id/etFechaFiltrada"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="16dp"
             android:clickable="true"
             android:focusable="false"
             android:hint="Selecciona una fecha"
-            android:minHeight="48dp" />
+            android:background="@android:drawable/edit_text"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:textSize="16sp" />
 
         <!-- Botón para filtrar -->
         <Button
@@ -26,6 +30,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Ver horarios del día"
+            android:backgroundTint="#6200EE"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
             android:layout_marginBottom="24dp" />
 
         <!-- Resultados -->

@@ -2,47 +2,50 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#FAFAFA">
 
     <LinearLayout
         android:id="@+id/layoutRaiz"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="24dp">
 
         <!-- Campo nombre -->
         <EditText
             android:id="@+id/etNombreAlumno"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="#DDDDDD"
+            android:layout_marginBottom="12dp"
             android:hint="Nombre del alumno"
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
             android:minHeight="48dp"
-            android:padding="10dp" />
+            android:textSize="16sp" />
 
         <!-- Campo apellidos -->
         <EditText
             android:id="@+id/etApellidosAlumno"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="#DDDDDD"
+            android:layout_marginBottom="12dp"
             android:hint="Apellidos"
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
             android:minHeight="48dp"
-            android:padding="10dp" />
+            android:textSize="16sp" />
 
         <!-- Campo DNI -->
         <EditText
             android:id="@+id/etDniAlumno"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:background="#DDDDDD"
+            android:layout_marginBottom="20dp"
             android:hint="DNI"
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
             android:minHeight="48dp"
-            android:padding="10dp" />
+            android:textSize="16sp" />
 
         <!-- Botón agregar -->
         <Button
@@ -50,7 +53,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Agregar Alumno"
-            android:layout_marginBottom="24dp"/>
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:backgroundTint="#6200EE"
+            android:layout_marginBottom="24dp" />
 
         <!-- Lista de alumnos -->
         <LinearLayout
