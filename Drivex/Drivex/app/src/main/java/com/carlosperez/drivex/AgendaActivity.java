@@ -4,9 +4,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.carlosperez.drivex.dao.HorarioDAO;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -29,6 +27,8 @@ public class AgendaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_agenda);
 
         agendaLayout = findViewById(R.id.agendaLayout);
+        etFecha = findViewById(R.id.etFechaFiltrada);
+        btnBuscar = findViewById(R.id.btnFiltrarAgenda);
         horarioDAO = new HorarioDAO(this);
 
         idUsuario = getIntent().getIntExtra("idUsuario", -1);
@@ -39,19 +39,7 @@ public class AgendaActivity extends AppCompatActivity {
             return;
         }
 
-        // Crear campo de fecha y botón
-        etFecha = new EditText(this);
-        etFecha.setHint("Selecciona una fecha");
-        etFecha.setFocusable(false);
-        etFecha.setPadding(0, 16, 0, 16);
-
-        btnBuscar = new Button(this);
-        btnBuscar.setText("Ver agenda del día");
-
-        agendaLayout.addView(etFecha);
-        agendaLayout.addView(btnBuscar);
-
-        // Picker de fecha
+        // Selector de fecha
         etFecha.setOnClickListener(v -> {
             new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
                 calendario.set(Calendar.YEAR, year);
@@ -61,12 +49,14 @@ public class AgendaActivity extends AppCompatActivity {
             }, calendario.get(Calendar.YEAR), calendario.get(Calendar.MONTH), calendario.get(Calendar.DAY_OF_MONTH)).show();
         });
 
-        // Buscar al hacer clic
+        // Botón buscar
         btnBuscar.setOnClickListener(v -> cargarAgendaPorFecha());
     }
 
     private void cargarAgendaPorFecha() {
-        agendaLayout.removeViews(2, agendaLayout.getChildCount() - 2); // deja fecha y botón
+        agendaLayout.removeAllViews();
+
+
 
         String fecha = etFecha.getText().toString().trim();
         if (fecha.isEmpty()) {
