@@ -40,6 +40,11 @@ public class RegistroUsuarioActivity extends AppCompatActivity {
                 Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
+            if (!email.endsWith("@gmail.com")) {
+                Toast.makeText(this, "El email debe tener el formato de un gmail", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
 
             Usuario nuevoUsuario = new Usuario(nombre, email, contrasena);
 

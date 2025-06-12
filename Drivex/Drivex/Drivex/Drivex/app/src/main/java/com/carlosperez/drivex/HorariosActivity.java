@@ -1,6 +1,7 @@
 package com.carlosperez.drivex;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +33,34 @@ public class HorariosActivity extends AppCompatActivity {
         etFecha = findViewById(R.id.etFecha);
         etHoraInicio = findViewById(R.id.etHoraInicio);
         etHoraFin = findViewById(R.id.etHoraFin);
+        // Desactivar la escritura manual en los campos de horas
+        etHoraInicio.setKeyListener(null);
+        etHoraFin.setKeyListener(null);
+
+// TimePicker para Hora de Inicio
+        etHoraInicio.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+
+            new TimePickerDialog(this, (view, hourOfDay, minute1) -> {
+                String horaSeleccionada = String.format("%02d:%02d", hourOfDay, minute1);
+                etHoraInicio.setText(horaSeleccionada);
+            }, hour, minute, true).show();
+        });
+
+// TimePicker para Hora de Fin
+        etHoraFin.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+
+            new TimePickerDialog(this, (view, hourOfDay, minute1) -> {
+                String horaSeleccionada = String.format("%02d:%02d", hourOfDay, minute1);
+                etHoraFin.setText(horaSeleccionada);
+            }, hour, minute, true).show();
+        });
+
         btnAgregarHorario = findViewById(R.id.btnAgregarHorario);
 
         // Obtener el ID del alumno

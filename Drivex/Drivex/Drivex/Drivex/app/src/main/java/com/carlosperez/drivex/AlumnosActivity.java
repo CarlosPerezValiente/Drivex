@@ -53,6 +53,13 @@ public class AlumnosActivity extends AppCompatActivity {
             String apellidos = etApellidosAlumno.getText().toString().trim();
             String dni = etDniAlumno.getText().toString().trim();
 
+            // Validación de formato DNI español simple
+            if (!dni.matches("^[0-9]{8}[A-Za-z]$")) {
+                Toast.makeText(this, "Introduce un DNI válido (8 números + letra)", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
             if (nombre.isEmpty() || apellidos.isEmpty() || dni.isEmpty()) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
                 return;
