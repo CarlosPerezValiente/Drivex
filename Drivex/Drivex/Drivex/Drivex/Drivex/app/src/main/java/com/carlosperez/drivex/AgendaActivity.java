@@ -1,10 +1,13 @@
 package com.carlosperez.drivex;
 
 import android.app.DatePickerDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.carlosperez.drivex.dao.HorarioDAO;
+import com.carlosperez.drivex.model.Horario;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -55,14 +58,14 @@ public class AgendaActivity extends AppCompatActivity {
 
     private void cargarAgendaPorFecha() {
         agendaLayout.removeAllViews();
-        
+
         String fecha = etFecha.getText().toString().trim();
         if (fecha.isEmpty()) {
             Toast.makeText(this, "Selecciona una fecha", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        List<String> agenda = horarioDAO.obtenerAgendaPorFecha(fecha, idUsuario);
+        List<Horario> agenda = horarioDAO.obtenerAgendaPorFecha(fecha, idUsuario);
 
         if (agenda.isEmpty()) {
             TextView empty = new TextView(this);
@@ -70,13 +73,50 @@ public class AgendaActivity extends AppCompatActivity {
             empty.setPadding(0, 32, 0, 32);
             agendaLayout.addView(empty);
         } else {
-            for (String item : agenda) {
-                TextView tv = new TextView(this);
-                tv.setText(item);
-                tv.setTextSize(16);
-                tv.setPadding(0, 16, 0, 16);
-                agendaLayout.addView(tv);
+            for (Horario h : agenda) {
+                LinearLayout card = new LinearLayout(this);
+                card.setOrientation(LinearLayout.VERTICAL);
+                card.setPadding(20, 20, 20, 20);
+                card.setBackgroundColor(Color.parseColor("#EFEFEF"));
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                params.setMargins(0, 16, 0, 16);
+                card.setLayoutParams(params);
+
+                TextView tvFecha = new TextView(this);
+                tvFecha.setText("🗓 Fecha: " + formatearFecha(h.getFecha()));
+                tvFecha.setTextSize(16);
+
+                TextView tvHora = new TextView(this);
+                tvHora.setText("🕐 Hora: " + h.getHoraInicio() + " - " + h.getHoraFin());
+                tvHora.setTextSize(16);
+
+                TextView tvDescripcion = new TextView(this);
+                tvDescripcion.setText(h.getDescripcion());
+                tvDescripcion.setTextSize(16);
+
+                card.addView(tvFecha);
+                card.addView(tvHora);
+                card.addView(tvDescripcion);
+                agendaLayout.addView(card);
             }
         }
     }
+
+
+    private String formatearFecha(String fechaBD) {
+        try {
+            SimpleDateFormat formatoBD = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            SimpleDateFormat formatoUsuario = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            return formatoUsuario.format(formatoBD.parse(fechaBD));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return fechaBD;  // Si hay error, mostramos tal cual
+        }
+    }
+
+
+
 }

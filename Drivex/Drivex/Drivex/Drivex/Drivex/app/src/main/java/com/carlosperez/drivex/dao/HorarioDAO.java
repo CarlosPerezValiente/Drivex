@@ -89,11 +89,11 @@ public class HorarioDAO {
         return agenda;
     }
 
-    public List<String> obtenerAgendaPorFecha(String fecha, int idUsuario) {
-        List<String> agenda = new ArrayList<>();
+    public List<Horario> obtenerAgendaPorFecha(String fecha, int idUsuario) {
+        List<Horario> lista = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String query = "SELECT h.hora_inicio, h.hora_fin, a.nombre, a.apellidos " +
+        String query = "SELECT h.id_horario, h.id_alumno, h.fecha, h.hora_inicio, h.hora_fin, h.descripcion, a.nombre, a.apellidos " +
                 "FROM horarios h " +
                 "JOIN alumnos a ON h.id_alumno = a.id_alumno " +
                 "WHERE a.id_usuario = ? AND h.fecha = ? " +
@@ -103,19 +103,30 @@ public class HorarioDAO {
 
         if (cursor.moveToFirst()) {
             do {
-                String inicio = cursor.getString(0);
-                String fin = cursor.getString(1);
-                String nombre = cursor.getString(2);
-                String apellidos = cursor.getString(3);
-                agenda.add("⏰ " + inicio + " - " + fin + " → " + nombre + " " + apellidos);
+                Horario h = new Horario();
+                h.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id_horario")));
+                h.setIdAlumno(cursor.getInt(cursor.getColumnIndexOrThrow("id_alumno")));
+                h.setFecha(cursor.getString(cursor.getColumnIndexOrThrow("fecha")));
+                h.setHoraInicio(cursor.getString(cursor.getColumnIndexOrThrow("hora_inicio")));
+                h.setHoraFin(cursor.getString(cursor.getColumnIndexOrThrow("hora_fin")));
+                h.setDescripcion(cursor.getString(cursor.getColumnIndexOrThrow("descripcion")));
+
+                // ⚠️ Añadimos nombre y apellidos usando campos temporales:
+                String nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre"));
+                String apellidos = cursor.getString(cursor.getColumnIndexOrThrow("apellidos"));
+
+                // Truquito rápido: guardamos el nombre completo dentro de la descripción temporalmente
+                h.setDescripcion("Alumno: " + nombre + " " + apellidos + "\nDescripción: " + (h.getDescripcion() == null ? "-" : h.getDescripcion()));
+
+                lista.add(h);
             } while (cursor.moveToNext());
         }
 
         cursor.close();
         db.close();
-        return agenda;
-
+        return lista;
     }
+
 
     public boolean eliminarHorario(int idHorario) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();

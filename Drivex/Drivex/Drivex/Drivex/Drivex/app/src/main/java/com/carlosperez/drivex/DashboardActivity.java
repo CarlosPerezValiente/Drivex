@@ -1,6 +1,7 @@
 package com.carlosperez.drivex;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -48,10 +49,16 @@ public class DashboardActivity extends AppCompatActivity {
 
         // 🔹 Cerrar sesión
         btnCerrarSesion.setOnClickListener(v -> {
+            SharedPreferences prefs = getSharedPreferences("SesionUsuario", MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.clear(); // Limpiamos la sesión
+            editor.apply();
+
             Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
         });
+
     }
 }
