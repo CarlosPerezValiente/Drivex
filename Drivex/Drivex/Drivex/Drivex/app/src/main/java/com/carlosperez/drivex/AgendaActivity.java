@@ -55,9 +55,7 @@ public class AgendaActivity extends AppCompatActivity {
 
     private void cargarAgendaPorFecha() {
         agendaLayout.removeAllViews();
-
-
-
+        
         String fecha = etFecha.getText().toString().trim();
         if (fecha.isEmpty()) {
             Toast.makeText(this, "Selecciona una fecha", Toast.LENGTH_SHORT).show();

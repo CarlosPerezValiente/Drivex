@@ -26,6 +26,8 @@ public class HorarioDAO {
         values.put("fecha", horario.getFecha());  // ← usamos fecha
         values.put("hora_inicio", horario.getHoraInicio());
         values.put("hora_fin", horario.getHoraFin());
+        values.put("descripcion", horario.getDescripcion());
+
 
         long id = db.insert("horarios", null, values);
         db.close();
@@ -47,6 +49,8 @@ public class HorarioDAO {
                 h.setFecha(cursor.getString(cursor.getColumnIndexOrThrow("fecha")));
                 h.setHoraInicio(cursor.getString(cursor.getColumnIndexOrThrow("hora_inicio")));
                 h.setHoraFin(cursor.getString(cursor.getColumnIndexOrThrow("hora_fin")));
+                h.setDescripcion(cursor.getString(cursor.getColumnIndexOrThrow("descripcion")));
+
                 lista.add(h);
             } while (cursor.moveToNext());
         }
@@ -110,7 +114,16 @@ public class HorarioDAO {
         cursor.close();
         db.close();
         return agenda;
+
     }
+
+    public boolean eliminarHorario(int idHorario) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int filasAfectadas = db.delete("horarios", "id_horario = ?", new String[]{String.valueOf(idHorario)});
+        db.close();
+        return filasAfectadas > 0;
+    }
+
 
 
 }

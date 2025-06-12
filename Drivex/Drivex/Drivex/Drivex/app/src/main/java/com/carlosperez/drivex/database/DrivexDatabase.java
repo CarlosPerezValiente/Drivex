@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DrivexDatabase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "drivex.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     public DrivexDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -54,10 +54,12 @@ public class DrivexDatabase extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE horarios (" +
                 "id_horario INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "id_alumno INTEGER NOT NULL, " +
-                "fecha TEXT NOT NULL, " +          // NUEVO: fecha real (YYYY-MM-DD)
+                "fecha TEXT NOT NULL, " +
                 "hora_inicio TEXT NOT NULL, " +
                 "hora_fin TEXT NOT NULL, " +
+                "descripcion TEXT, " +   // <- AÑADIDO EL NUEVO CAMPO
                 "FOREIGN KEY(id_alumno) REFERENCES alumnos(id_alumno) ON DELETE CASCADE)");
+
     }
 
         @Override

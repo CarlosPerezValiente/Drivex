@@ -45,6 +45,14 @@
             android:background="@android:drawable/edit_text"
             android:layout_marginBottom="20dp" />
 
+        <EditText
+            android:id="@+id/etDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Descripción de la clase"
+            android:layout_marginBottom="12dp"/>
+
+
         <!-- Botón agregar -->
         <Button
             android:id="@+id/btnAgregarHorario"
