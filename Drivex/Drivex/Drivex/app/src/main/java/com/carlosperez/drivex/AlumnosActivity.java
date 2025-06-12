@@ -76,9 +76,7 @@ public class AlumnosActivity extends AppCompatActivity {
 
     private void cargarListaAlumnos() {
         listaAlumnosLayout.removeAllViews();
-        int idUsuario = getIntent().getIntExtra("idUsuario", -1);
         List<Alumno> alumnos = alumnoDAO.obtenerPorUsuario(idUsuario);
-
 
         for (Alumno alumno : alumnos) {
             LinearLayout contenedor = new LinearLayout(this);
@@ -88,7 +86,9 @@ public class AlumnosActivity extends AppCompatActivity {
             TextView tv = new TextView(this);
             tv.setText(alumno.getNombre() + " " + alumno.getApellidos() + " (" + alumno.getDni() + ")");
             tv.setTextSize(16);
+            contenedor.addView(tv);
 
+            // Botón Ver Horario
             Button btnVerHorario = new Button(this);
             btnVerHorario.setText("Ver horario");
             btnVerHorario.setOnClickListener(v -> {
@@ -96,12 +96,25 @@ public class AlumnosActivity extends AppCompatActivity {
                 intent.putExtra("idAlumno", alumno.getId());
                 startActivity(intent);
             });
-
-            contenedor.addView(tv);
             contenedor.addView(btnVerHorario);
+
+            // Botón Eliminar Alumno
+            Button btnEliminar = new Button(this);
+            btnEliminar.setText("Eliminar alumno");
+            btnEliminar.setOnClickListener(v -> {
+                boolean exito = alumnoDAO.eliminarAlumno(alumno.getId());
+                if (exito) {
+                    Toast.makeText(this, "Alumno eliminado", Toast.LENGTH_SHORT).show();
+                    cargarListaAlumnos();
+                } else {
+                    Toast.makeText(this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+                }
+            });
+            contenedor.addView(btnEliminar);
 
             listaAlumnosLayout.addView(contenedor);
         }
     }
+
 
 }

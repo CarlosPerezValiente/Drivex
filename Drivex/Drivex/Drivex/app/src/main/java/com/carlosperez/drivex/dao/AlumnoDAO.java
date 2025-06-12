@@ -31,6 +31,15 @@ public class AlumnoDAO {
         return id != -1;
     }
 
+    // AlumnoDAO.java
+
+    public boolean eliminarAlumno(int idAlumno) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int filasAfectadas = db.delete("alumnos", "id_alumno = ?", new String[]{String.valueOf(idAlumno)});
+        db.close();
+        return filasAfectadas > 0;
+    }
+
     // Obtener alumnos de un usuario específico
     public List<Alumno> obtenerPorUsuario(int idUsuario) {
         List<Alumno> lista = new ArrayList<>();
