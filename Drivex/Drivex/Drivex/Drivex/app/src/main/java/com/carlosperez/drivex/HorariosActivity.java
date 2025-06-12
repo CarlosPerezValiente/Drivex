@@ -2,6 +2,7 @@ package com.carlosperez.drivex;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -124,14 +125,44 @@ public class HorariosActivity extends AppCompatActivity {
             TextView vacio = new TextView(this);
             vacio.setText("No hay horarios registrados para este alumno.");
             contenedorHorarios.addView(vacio);
-            return;
         }
 
         for (Horario h : lista) {
-            TextView tv = new TextView(this);
-            tv.setText("📅 " + h.getFecha() + ": " + h.getHoraInicio() + " - " + h.getHoraFin());
-            tv.setPadding(0, 12, 0, 12);
-            contenedorHorarios.addView(tv);
+            LinearLayout card = new LinearLayout(this);
+            card.setOrientation(LinearLayout.VERTICAL);
+            card.setPadding(20, 20, 20, 20);
+            card.setBackgroundColor(Color.parseColor("#EFEFEF"));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(0, 16, 0, 16);
+            card.setLayoutParams(params);
+
+            TextView tvFecha = new TextView(this);
+            tvFecha.setText("🗓 Fecha: " + formatearFecha(h.getFecha()));
+            tvFecha.setTextSize(16);
+
+            TextView tvHora = new TextView(this);
+            tvHora.setText("🕐 Hora: " + h.getHoraInicio() + " - " + h.getHoraFin());
+            tvHora.setTextSize(16);
+
+            card.addView(tvFecha);
+            card.addView(tvHora);
+            contenedorHorarios.addView(card);
         }
     }
+
+    private String formatearFecha(String fechaBD) {
+        try {
+            SimpleDateFormat formatoBD = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            SimpleDateFormat formatoUsuario = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            return formatoUsuario.format(formatoBD.parse(fechaBD));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return fechaBD;  // Si hay error, mostramos tal cual
+        }
+    }
+
+
 }
