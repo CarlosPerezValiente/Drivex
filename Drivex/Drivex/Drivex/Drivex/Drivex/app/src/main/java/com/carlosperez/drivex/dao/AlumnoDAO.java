@@ -76,4 +76,31 @@ public class AlumnoDAO {
         return count;
     }
 
+    public List<Alumno> obtenerAlumnosSinHorario(int idUsuario) {
+        List<Alumno> lista = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT a.* FROM alumnos a LEFT JOIN horarios h ON a.id_alumno = h.id_alumno WHERE a.id_usuario = ? AND h.id_horario IS NULL";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Alumno a = new Alumno();
+                a.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id_alumno")));
+                a.setNombre(cursor.getString(cursor.getColumnIndexOrThrow("nombre")));
+                a.setApellidos(cursor.getString(cursor.getColumnIndexOrThrow("apellidos")));
+                a.setDni(cursor.getString(cursor.getColumnIndexOrThrow("dni")));
+                a.setIdUsuario(idUsuario);
+                lista.add(a);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return lista;
+    }
+
+
+
+
 }

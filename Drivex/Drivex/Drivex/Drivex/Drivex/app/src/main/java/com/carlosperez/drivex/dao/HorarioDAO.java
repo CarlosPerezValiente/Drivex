@@ -170,6 +170,47 @@ public class HorarioDAO {
         return count;
     }
 
+    public int obtenerTotalHorariosPorUsuario(int idUsuario) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM horarios h INNER JOIN alumnos a ON h.id_alumno = a.id_alumno WHERE a.id_usuario = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario)});
+
+        int total = 0;
+        if (cursor.moveToFirst()) {
+            total = cursor.getInt(0);
+        }
+
+        cursor.close();
+        db.close();
+        return total;
+    }
+
+    public List<Horario> obtenerHorariosProximos(int idUsuario) {
+        List<Horario> lista = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT h.* FROM horarios h INNER JOIN alumnos a ON h.id_alumno = a.id_alumno WHERE a.id_usuario = ? AND date(h.fecha) >= date('now') ORDER BY h.fecha ASC, h.hora_inicio ASC LIMIT 1";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Horario h = new Horario();
+                h.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id_horario")));
+                h.setIdAlumno(cursor.getInt(cursor.getColumnIndexOrThrow("id_alumno")));
+                h.setFecha(cursor.getString(cursor.getColumnIndexOrThrow("fecha")));
+                h.setHoraInicio(cursor.getString(cursor.getColumnIndexOrThrow("hora_inicio")));
+                h.setHoraFin(cursor.getString(cursor.getColumnIndexOrThrow("hora_fin")));
+                h.setDescripcion(cursor.getString(cursor.getColumnIndexOrThrow("descripcion")));
+                lista.add(h);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return lista;
+    }
+
+
 
 
 }
