@@ -2,8 +2,11 @@ package com.carlosperez.drivex;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.*;
@@ -11,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.carlosperez.drivex.dao.HorarioDAO;
 import com.carlosperez.drivex.model.Horario;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -152,6 +157,10 @@ public class HorariosActivity extends AppCompatActivity {
             tvDescripcion.setText("📝 Descripción: " + h.getDescripcion());
             tvDescripcion.setTextSize(16);
 
+            Button btnExportar = new Button(this);
+            btnExportar.setText("Exportar PDF");
+            btnExportar.setOnClickListener(v -> exportarHorarioPDF(h));
+
             Button btnEliminar = new Button(this);
             btnEliminar.setText("Eliminar");
             btnEliminar.setTextColor(Color.WHITE);
@@ -170,6 +179,8 @@ public class HorariosActivity extends AppCompatActivity {
             btnParams.gravity = Gravity.CENTER_HORIZONTAL;
             btnEliminar.setLayoutParams(btnParams);
 
+
+
             // Acción eliminar
             btnEliminar.setOnClickListener(v -> {
                 horarioDAO.eliminarHorario(h.getId());
@@ -181,6 +192,7 @@ public class HorariosActivity extends AppCompatActivity {
             card.addView(tvHora);
             card.addView(tvDescripcion);
             card.addView(btnEliminar);
+            card.addView(btnExportar);
 
             contenedorHorarios.addView(card);
         }
@@ -198,4 +210,41 @@ public class HorariosActivity extends AppCompatActivity {
             return fechaBD;
         }
     }
+
+    private void exportarHorarioPDF(Horario horario) {
+        PdfDocument documento = new PdfDocument();
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(300, 600, 1).create();
+        PdfDocument.Page pagina = documento.startPage(pageInfo);
+
+        Canvas canvas = pagina.getCanvas();
+        Paint paint = new Paint();
+        paint.setTextSize(12);
+        paint.setColor(Color.BLACK);
+
+        int x = 10, y = 25;
+
+        canvas.drawText("Detalle de Clase:", x, y, paint);
+        y += 25;
+        canvas.drawText("Fecha: " + formatearFecha(horario.getFecha()), x, y, paint);
+        y += 20;
+        canvas.drawText("Hora: " + horario.getHoraInicio() + " - " + horario.getHoraFin(), x, y, paint);
+        y += 20;
+        canvas.drawText("Descripción: " + horario.getDescripcion(), x, y, paint);
+
+        documento.finishPage(pagina);
+
+        try {
+            File file = new File(getExternalFilesDir(null), "Clase_" + horario.getId() + ".pdf");
+            FileOutputStream fos = new FileOutputStream(file);
+            documento.writeTo(fos);
+            documento.close();
+            fos.close();
+
+            Toast.makeText(this, "PDF guardado: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al exportar PDF", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
