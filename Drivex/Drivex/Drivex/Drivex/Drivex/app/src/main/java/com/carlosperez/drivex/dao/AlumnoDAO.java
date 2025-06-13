@@ -63,4 +63,17 @@ public class AlumnoDAO {
         db.close();
         return lista;
     }
+
+    public int contarAlumnosPorUsuario(int idUsuario) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM alumnos WHERE id_usuario = ?", new String[]{String.valueOf(idUsuario)});
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return count;
+    }
+
 }

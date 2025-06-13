@@ -44,6 +44,14 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button btnVerEstadisticas = findViewById(R.id.btnVerEstadisticas);
+        btnVerEstadisticas.setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, EstadisticasActivity.class);
+            intent.putExtra("idUsuario", idUsuario);
+            startActivity(intent);
+        });
+
+
 
 
 

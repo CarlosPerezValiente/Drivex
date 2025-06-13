@@ -8,8 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import com.carlosperez.drivex.database.DrivexDatabase;
 import com.carlosperez.drivex.model.Horario;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HorarioDAO {
     private DrivexDatabase dbHelper;
@@ -133,6 +136,38 @@ public class HorarioDAO {
         int filasAfectadas = db.delete("horarios", "id_horario = ?", new String[]{String.valueOf(idHorario)});
         db.close();
         return filasAfectadas > 0;
+    }
+
+
+    public int contarHorariosPorUsuario(int idUsuario) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM horarios h JOIN alumnos a ON h.id_alumno = a.id_alumno WHERE a.id_usuario = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario)});
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return count;
+    }
+
+    public int contarClasesHoy(int idUsuario) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        String query = "SELECT COUNT(*) FROM horarios h JOIN alumnos a ON h.id_alumno = a.id_alumno " +
+                "WHERE a.id_usuario = ? AND h.fecha = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario), fechaHoy});
+
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return count;
     }
 
 

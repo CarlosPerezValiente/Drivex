@@ -53,7 +53,18 @@
                     android:text="Ver Agenda General"
                     android:backgroundTint="#6200EE"
                     android:textColor="@android:color/white" />
+
+
+                <Button
+                    android:id="@+id/btnVerEstadisticas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ver estadísticas"
+                    android:layout_marginTop="12dp"/>
+
             </LinearLayout>
+
+
         </androidx.cardview.widget.CardView>
 
         <!-- Botón de cerrar sesión -->
