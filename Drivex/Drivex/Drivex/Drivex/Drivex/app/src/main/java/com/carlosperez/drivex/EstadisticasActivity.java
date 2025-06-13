@@ -1,113 +1,173 @@
 package com.carlosperez.drivex;
 
+import android.animation.LayoutTransition;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+
 import com.carlosperez.drivex.dao.AlumnoDAO;
 import com.carlosperez.drivex.dao.HorarioDAO;
 import com.carlosperez.drivex.model.Horario;
+
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 public class EstadisticasActivity extends AppCompatActivity {
 
     private LinearLayout statsLayout;
-    private AlumnoDAO alumnoDAO;
     private HorarioDAO horarioDAO;
+    private AlumnoDAO alumnoDAO;
     private int idUsuario;
     private String nombreUsuario;
+    private boolean alumnosMostrados = false; // Para controlar el despliegue
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estadisticas);
+        setTitle("Estadisticas");
 
         statsLayout = findViewById(R.id.statsLayout);
-        alumnoDAO = new AlumnoDAO(this);
+
+        LayoutTransition transition = new LayoutTransition();
+        statsLayout.setLayoutTransition(transition);
+        transition.enableTransitionType(LayoutTransition.CHANGING);
+
+
         horarioDAO = new HorarioDAO(this);
+        alumnoDAO = new AlumnoDAO(this);
 
         idUsuario = getIntent().getIntExtra("idUsuario", -1);
         nombreUsuario = getIntent().getStringExtra("nombreUsuario");
 
         if (idUsuario == -1) {
-            mostrarError("Error al obtener usuario");
+            Toast.makeText(this, "No se pudo obtener el ID del usuario.", Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
 
-        mostrarTitulo("Estadísticas de " + nombreUsuario);
         cargarEstadisticas();
     }
 
     private void cargarEstadisticas() {
-        int totalAlumnos = alumnoDAO.obtenerPorUsuario(idUsuario).size();
-        int totalHorarios = horarioDAO.obtenerTotalHorariosPorUsuario(idUsuario);
-        int alumnosSinHorario = alumnoDAO.obtenerAlumnosSinHorario(idUsuario).size();
-        String proximaClase = obtenerProximaClase();
+        statsLayout.removeAllViews();
 
-        añadirTarjeta("👥 Total de alumnos", String.valueOf(totalAlumnos));
-        añadirTarjeta("📅 Total de clases programadas", String.valueOf(totalHorarios));
-        añadirTarjeta("❗ Alumnos sin horario asignado", String.valueOf(alumnosSinHorario));
-        añadirTarjeta("🕑 Próxima clase", proximaClase);
+        int totalAlumnos = alumnoDAO.obtenerTodosPorUsuario(idUsuario).size();
+        int totalClases = horarioDAO.obtenerTotalClases(idUsuario);
+        int clasesFuturas = horarioDAO.obtenerTotalClasesFuturas(idUsuario);
+        Horario proximaClase = horarioDAO.obtenerProximaClase(idUsuario);
+
+        // CARD TOTAL ALUMNOS
+        CardView cardAlumnos = crearTarjeta("👨‍🎓 Total de alumnos: " + totalAlumnos);
+        LinearLayout layoutAlumnos = (LinearLayout) cardAlumnos.getChildAt(0);
+
+        Button btnAlumnos = new Button(this);
+        btnAlumnos.setText("Ver alumnos");
+        btnAlumnos.setBackgroundColor(0xFF1976D2);
+        btnAlumnos.setTextColor(0xFFFFFFFF);
+        btnAlumnos.setTextSize(14);
+        btnAlumnos.setPadding(32, 12, 32, 12);
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setCornerRadius(30);
+        drawable.setColor(0xFF1976D2);
+        btnAlumnos.setBackground(drawable);
+
+        LinearLayout.LayoutParams paramsBoton = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        paramsBoton.setMargins(0, 20, 0, 0);
+        btnAlumnos.setLayoutParams(paramsBoton);
+        layoutAlumnos.addView(btnAlumnos);
+
+        LinearLayout contenedorAlumnos = new LinearLayout(this);
+        contenedorAlumnos.setOrientation(LinearLayout.VERTICAL);
+        layoutAlumnos.addView(contenedorAlumnos);
+        statsLayout.addView(cardAlumnos);
+
+        btnAlumnos.setOnClickListener(v -> {
+            if (!alumnosMostrados) {
+                mostrarListaAlumnos(contenedorAlumnos);
+                alumnosMostrados = true;
+            }
+        });
+
+        // Otras estadísticas
+        statsLayout.addView(crearTarjeta("📅 Total de clases registradas: " + totalClases));
+        statsLayout.addView(crearTarjeta("⏳ Clases próximas: " + clasesFuturas));
+
+        // PRÓXIMA CLASE en una única tarjeta
+        if (proximaClase != null) {
+            String textoClase = "🚗 Próxima clase:\n\n" +
+                    "👤 Alumno: " + proximaClase.getDescripcion() + "\n" +
+                    "📅 Fecha: " + formatearFecha(proximaClase.getFecha()) + "\n" +
+                    "⏰ Hora: " + proximaClase.getHoraInicio() + " - " + proximaClase.getHoraFin();
+            statsLayout.addView(crearTarjeta(textoClase));
+        } else {
+            statsLayout.addView(crearTarjeta("🚗 No hay clases próximas."));
+        }
     }
 
-    private void mostrarTitulo(String texto) {
-        TextView titulo = new TextView(this);
-        titulo.setText(texto);
-        titulo.setTextSize(20);
-        titulo.setPadding(0, 0, 0, 40);
-        statsLayout.addView(titulo);
+
+    private void mostrarListaAlumnos(LinearLayout contenedorAlumnos) {
+        List<String> alumnos = alumnoDAO.obtenerTodosPorUsuario(idUsuario);
+        for (String alumno : alumnos) {
+            contenedorAlumnos.addView(crearTarjetaAlumno(alumno));
+        }
     }
 
-    private void añadirTarjeta(String titulo, String valor) {
+    private CardView crearTarjeta(String texto) {
         CardView card = new CardView(this);
+        card.setRadius(24);
         card.setCardElevation(8);
-        card.setRadius(20);
         card.setUseCompatPadding(true);
+        card.setCardBackgroundColor(0xFFFFFFFF);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(32, 32, 32, 32);
+
+        TextView tv = new TextView(this);
+        tv.setText(texto);
+        tv.setTextSize(18);
+        layout.addView(tv);
+        card.addView(layout);
+
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 16, 0, 16);
+        params.setMargins(0, 32, 0, 0);
         card.setLayoutParams(params);
 
-        LinearLayout contenido = new LinearLayout(this);
-        contenido.setPadding(32, 32, 32, 32);
-        contenido.setOrientation(LinearLayout.VERTICAL);
-
-        TextView tvTitulo = new TextView(this);
-        tvTitulo.setText(titulo);
-        tvTitulo.setTextSize(16);
-        tvTitulo.setPadding(0, 0, 0, 8);
-
-        TextView tvValor = new TextView(this);
-        tvValor.setText(valor);
-        tvValor.setTextSize(24);
-        tvValor.setTextColor(getResources().getColor(android.R.color.black));
-
-        contenido.addView(tvTitulo);
-        contenido.addView(tvValor);
-        card.addView(contenido);
-        statsLayout.addView(card);
+        return card;
     }
 
-    private void mostrarError(String mensaje) {
-        TextView error = new TextView(this);
-        error.setText(mensaje);
-        statsLayout.addView(error);
-    }
+    private CardView crearTarjetaAlumno(String alumno) {
+        CardView card = new CardView(this);
+        card.setRadius(20);
+        card.setCardElevation(6);
+        card.setUseCompatPadding(true);
+        card.setCardBackgroundColor(0xFFE3F2FD);
 
-    private String obtenerProximaClase() {
-        List<Horario> horarios = horarioDAO.obtenerHorariosProximos(idUsuario);
-        if (horarios.isEmpty()) {
-            return "No hay clases programadas.";
-        } else {
-            Horario h = horarios.get(0);
-            String fechaFormateada = formatearFecha(h.getFecha());
-            return fechaFormateada + " | " + h.getHoraInicio() + " - " + h.getHoraFin();
-        }
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(28, 28, 28, 28);
+
+        TextView tv = new TextView(this);
+        tv.setText("👤 " + alumno);
+        tv.setTextSize(16);
+        layout.addView(tv);
+        card.addView(layout);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 16, 0, 0);
+        card.setLayoutParams(params);
+
+        return card;
     }
 
     private String formatearFecha(String fechaBD) {
@@ -116,6 +176,7 @@ public class EstadisticasActivity extends AppCompatActivity {
             SimpleDateFormat formatoUsuario = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             return formatoUsuario.format(formatoBD.parse(fechaBD));
         } catch (Exception e) {
+            e.printStackTrace();
             return fechaBD;
         }
     }

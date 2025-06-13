@@ -20,6 +20,7 @@ public class RegistroUsuarioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_usuario);
+        setTitle("Registro de usuario");
 
         // Inicializamos vistas
         etNombre = findViewById(R.id.etNombre);

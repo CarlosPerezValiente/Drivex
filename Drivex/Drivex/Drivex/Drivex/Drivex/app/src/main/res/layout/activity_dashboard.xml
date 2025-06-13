@@ -41,17 +41,17 @@
                     android:id="@+id/btnAlumnos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:backgroundTint="#3F51B5"
                     android:text="Gestión de Alumnos"
-                    android:backgroundTint="#6200EE"
-                    android:textColor="@android:color/white"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="@android:color/white" />
 
                 <Button
                     android:id="@+id/btnVerAgenda"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="#3F51B5"
                     android:text="Ver Agenda General"
-                    android:backgroundTint="#6200EE"
                     android:textColor="@android:color/white" />
 
 
@@ -59,8 +59,9 @@
                     android:id="@+id/btnVerEstadisticas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ver estadísticas"
-                    android:layout_marginTop="12dp"/>
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="#3F51B5"
+                    android:text="Ver estadísticas" />
 
             </LinearLayout>
 

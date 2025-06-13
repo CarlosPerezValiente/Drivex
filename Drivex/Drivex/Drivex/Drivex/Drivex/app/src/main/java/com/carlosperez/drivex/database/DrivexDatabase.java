@@ -42,13 +42,6 @@ public class DrivexDatabase extends SQLiteOpenHelper {
                 "descripcion TEXT, " +
                 "FOREIGN KEY(id_alumno) REFERENCES alumnos(id_alumno) ON DELETE CASCADE)");
 
-        // Crear tabla firmas
-        db.execSQL("CREATE TABLE firmas (" +
-                "id_firma INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "id_clase INTEGER NOT NULL, " +
-                "firma BLOB NOT NULL, " +
-                "fecha_firma TEXT DEFAULT (datetime('now','localtime')), " +
-                "FOREIGN KEY(id_clase) REFERENCES clases(id_clase) ON DELETE CASCADE)");
 
         // Crear tabla horarios
         db.execSQL("CREATE TABLE horarios (" +

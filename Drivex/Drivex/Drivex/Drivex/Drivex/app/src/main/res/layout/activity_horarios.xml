@@ -58,11 +58,11 @@
             android:id="@+id/btnAgregarHorario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:backgroundTint="#3F51B5"
             android:text="Agregar horario"
-            android:backgroundTint="#6200EE"
             android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:layout_marginBottom="24dp" />
+            android:textStyle="bold" />
 
         <!-- Contenedor de horarios -->
         <LinearLayout

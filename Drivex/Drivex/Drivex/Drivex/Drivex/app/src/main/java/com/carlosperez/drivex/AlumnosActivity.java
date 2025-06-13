@@ -2,6 +2,7 @@ package com.carlosperez.drivex;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.Button;
@@ -29,6 +30,8 @@ public class AlumnosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alumnos);
+        setTitle("Gestión de Alumnos");
+
 
         // 🔹 Recuperar ID del usuario desde el intent
         idUsuario = getIntent().getIntExtra("idUsuario", -1);  // 👈 Aquí sin 'int'
@@ -128,7 +131,11 @@ public class AlumnosActivity extends AppCompatActivity {
             btnVerHorario.setText("Ver horario");
             btnVerHorario.setTextSize(14);
             btnVerHorario.setTextColor(Color.WHITE);
-            btnVerHorario.setBackgroundColor(Color.parseColor("#1976D2"));
+
+            GradientDrawable drawable = new GradientDrawable();
+            drawable.setCornerRadius(30);
+            drawable.setColor(0xFF1976D2);
+            btnVerHorario.setBackground(drawable);
 
             LinearLayout.LayoutParams btnParams1 = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -148,7 +155,11 @@ public class AlumnosActivity extends AppCompatActivity {
             btnEliminar.setText("Eliminar");
             btnEliminar.setTextSize(14);
             btnEliminar.setTextColor(Color.WHITE);
-            btnEliminar.setBackgroundColor(Color.parseColor("#D32F2F"));
+
+            GradientDrawable drawable2 = new GradientDrawable();
+            drawable2.setCornerRadius(30);
+            drawable2.setColor(0xFFD32F2F);
+            btnEliminar.setBackground(drawable2);
 
             LinearLayout.LayoutParams btnParams2 = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,

@@ -23,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setTitle("Inicio de sesion de Drivex");
 
         etEmailLogin = findViewById(R.id.etEmailLogin);
         etContrasenaLogin = findViewById(R.id.etContrasenaLogin);

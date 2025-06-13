@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:backgroundTint="#6A1B9A"
+            android:backgroundTint="#3F51B5"
             android:text="Iniciar sesión"
             android:textColor="@android:color/white" />
 

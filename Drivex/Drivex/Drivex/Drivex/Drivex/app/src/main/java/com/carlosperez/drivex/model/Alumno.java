@@ -10,12 +10,6 @@ public class Alumno {
     public Alumno() {
     }
 
-    public Alumno(String nombre, String apellidos, String dni) {
-        this.nombre = nombre;
-        this.apellidos = apellidos;
-        this.dni = dni;
-    }
-
     public Alumno(String nombre, String apellidos, String dni, int idUsuario) {
         this.nombre = nombre;
         this.apellidos = apellidos;

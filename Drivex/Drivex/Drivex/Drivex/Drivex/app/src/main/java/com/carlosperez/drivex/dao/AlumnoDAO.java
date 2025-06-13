@@ -64,37 +64,19 @@ public class AlumnoDAO {
         return lista;
     }
 
-    public int contarAlumnosPorUsuario(int idUsuario) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM alumnos WHERE id_usuario = ?", new String[]{String.valueOf(idUsuario)});
-        int count = 0;
-        if (cursor.moveToFirst()) {
-            count = cursor.getInt(0);
-        }
-        cursor.close();
-        db.close();
-        return count;
-    }
 
-    public List<Alumno> obtenerAlumnosSinHorario(int idUsuario) {
-        List<Alumno> lista = new ArrayList<>();
+    public List<String> obtenerTodosPorUsuario(int idUsuario) {
+        List<String> lista = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        String query = "SELECT a.* FROM alumnos a LEFT JOIN horarios h ON a.id_alumno = h.id_alumno WHERE a.id_usuario = ? AND h.id_horario IS NULL";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario)});
+        Cursor cursor = db.rawQuery("SELECT nombre, apellidos, dni FROM alumnos WHERE id_usuario = ?",
+                new String[]{String.valueOf(idUsuario)});
 
         if (cursor.moveToFirst()) {
             do {
-                Alumno a = new Alumno();
-                a.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id_alumno")));
-                a.setNombre(cursor.getString(cursor.getColumnIndexOrThrow("nombre")));
-                a.setApellidos(cursor.getString(cursor.getColumnIndexOrThrow("apellidos")));
-                a.setDni(cursor.getString(cursor.getColumnIndexOrThrow("dni")));
-                a.setIdUsuario(idUsuario);
-                lista.add(a);
+                String alumno = cursor.getString(0) + " " + cursor.getString(1) + " (DNI: " + cursor.getString(2) + ")";
+                lista.add(alumno);
             } while (cursor.moveToNext());
         }
-
         cursor.close();
         db.close();
         return lista;

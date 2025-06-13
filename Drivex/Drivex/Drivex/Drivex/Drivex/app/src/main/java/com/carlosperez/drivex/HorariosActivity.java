@@ -3,6 +3,7 @@ package com.carlosperez.drivex;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.*;
@@ -29,6 +30,7 @@ public class HorariosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horarios);
+        setTitle("Horario del alumno ");
 
         // Enlazar vistas
         contenedorHorarios = findViewById(R.id.contenedorHorarios);
@@ -152,8 +154,12 @@ public class HorariosActivity extends AppCompatActivity {
 
             Button btnEliminar = new Button(this);
             btnEliminar.setText("Eliminar");
-            btnEliminar.setBackgroundColor(Color.parseColor("#D32F2F"));
             btnEliminar.setTextColor(Color.WHITE);
+
+            GradientDrawable drawable2 = new GradientDrawable();
+            drawable2.setCornerRadius(30);
+            drawable2.setColor(0xFFD32F2F);
+            btnEliminar.setBackground(drawable2);
 
             // Ajuste de tamaño pequeño
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(

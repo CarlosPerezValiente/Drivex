@@ -64,33 +64,7 @@ public class HorarioDAO {
     }
 
     // Agenda general por usuario
-    public List<String> obtenerAgendaCompleta(int idUsuario) {
-        List<String> agenda = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String query = "SELECT h.fecha, h.hora_inicio, h.hora_fin, a.nombre, a.apellidos " +
-                "FROM horarios h " +
-                "JOIN alumnos a ON h.id_alumno = a.id_alumno " +
-                "WHERE a.id_usuario = ? " +
-                "ORDER BY h.fecha ASC, h.hora_inicio ASC";
-
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario)});
-
-        if (cursor.moveToFirst()) {
-            do {
-                String fecha = cursor.getString(0);
-                String inicio = cursor.getString(1);
-                String fin = cursor.getString(2);
-                String nombre = cursor.getString(3);
-                String apellidos = cursor.getString(4);
-                agenda.add("📅 " + fecha + " | " + inicio + " - " + fin + " → " + nombre + " " + apellidos);
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-        return agenda;
-    }
 
     public List<Horario> obtenerAgendaPorFecha(String fecha, int idUsuario) {
         List<Horario> lista = new ArrayList<>();
@@ -139,76 +113,69 @@ public class HorarioDAO {
     }
 
 
-    public int contarHorariosPorUsuario(int idUsuario) {
+
+    // MÉTODOS NUEVOS PARA ESTADÍSTICAS EN HorarioDAO
+
+    // Obtener total de clases (todas)
+    public int obtenerTotalClases(int idUsuario) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM horarios h JOIN alumnos a ON h.id_alumno = a.id_alumno WHERE a.id_usuario = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario)});
-        int count = 0;
-        if (cursor.moveToFirst()) {
-            count = cursor.getInt(0);
-        }
-        cursor.close();
-        db.close();
-        return count;
-    }
-
-    public int contarClasesHoy(int idUsuario) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        String fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-
-        String query = "SELECT COUNT(*) FROM horarios h JOIN alumnos a ON h.id_alumno = a.id_alumno " +
-                "WHERE a.id_usuario = ? AND h.fecha = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario), fechaHoy});
-
-        int count = 0;
-        if (cursor.moveToFirst()) {
-            count = cursor.getInt(0);
-        }
-        cursor.close();
-        db.close();
-        return count;
-    }
-
-    public int obtenerTotalHorariosPorUsuario(int idUsuario) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM horarios h INNER JOIN alumnos a ON h.id_alumno = a.id_alumno WHERE a.id_usuario = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario)});
-
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM horarios h " +
+                        "JOIN alumnos a ON h.id_alumno = a.id_alumno " +
+                        "WHERE a.id_usuario = ?", new String[]{String.valueOf(idUsuario)});
         int total = 0;
         if (cursor.moveToFirst()) {
             total = cursor.getInt(0);
         }
-
         cursor.close();
         db.close();
         return total;
     }
 
-    public List<Horario> obtenerHorariosProximos(int idUsuario) {
-        List<Horario> lista = new ArrayList<>();
+    // Obtener total de clases futuras (próximas)
+    public int obtenerTotalClasesFuturas(int idUsuario) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        String query = "SELECT h.* FROM horarios h INNER JOIN alumnos a ON h.id_alumno = a.id_alumno WHERE a.id_usuario = ? AND date(h.fecha) >= date('now') ORDER BY h.fecha ASC, h.hora_inicio ASC LIMIT 1";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario)});
-
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM horarios h " +
+                        "JOIN alumnos a ON h.id_alumno = a.id_alumno " +
+                        "WHERE a.id_usuario = ? AND date(h.fecha) >= date('now')",
+                new String[]{String.valueOf(idUsuario)});
+        int total = 0;
         if (cursor.moveToFirst()) {
-            do {
-                Horario h = new Horario();
-                h.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id_horario")));
-                h.setIdAlumno(cursor.getInt(cursor.getColumnIndexOrThrow("id_alumno")));
-                h.setFecha(cursor.getString(cursor.getColumnIndexOrThrow("fecha")));
-                h.setHoraInicio(cursor.getString(cursor.getColumnIndexOrThrow("hora_inicio")));
-                h.setHoraFin(cursor.getString(cursor.getColumnIndexOrThrow("hora_fin")));
-                h.setDescripcion(cursor.getString(cursor.getColumnIndexOrThrow("descripcion")));
-                lista.add(h);
-            } while (cursor.moveToNext());
+            total = cursor.getInt(0);
         }
-
         cursor.close();
         db.close();
-        return lista;
+        return total;
     }
+
+    // Obtener la próxima clase
+    public Horario obtenerProximaClase(int idUsuario) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT h.id_horario, h.fecha, h.hora_inicio, h.hora_fin, h.descripcion, " +
+                        "a.nombre, a.apellidos, a.dni " +
+                        "FROM horarios h " +
+                        "JOIN alumnos a ON h.id_alumno = a.id_alumno " +
+                        "WHERE a.id_usuario = ? AND date(h.fecha) >= date('now') " +
+                        "ORDER BY h.fecha ASC, h.hora_inicio ASC LIMIT 1",
+                new String[]{String.valueOf(idUsuario)});
+
+        Horario proxima = null;
+        if (cursor.moveToFirst()) {
+            proxima = new Horario();
+            proxima.setId(cursor.getInt(0));
+            proxima.setFecha(cursor.getString(1));
+            proxima.setHoraInicio(cursor.getString(2));
+            proxima.setHoraFin(cursor.getString(3));
+            proxima.setDescripcion(cursor.getString(4) + " | " + cursor.getString(5) + " " + cursor.getString(6) + " (" + cursor.getString(7) + ")");
+        }
+        cursor.close();
+        db.close();
+        return proxima;
+    }
+
+
 
 
 

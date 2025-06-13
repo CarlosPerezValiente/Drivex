@@ -28,6 +28,7 @@ public class AgendaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agenda);
+        setTitle("Agenda general");
 
         agendaLayout = findViewById(R.id.agendaLayout);
         etFecha = findViewById(R.id.etFechaFiltrada);
@@ -94,7 +95,7 @@ public class AgendaActivity extends AppCompatActivity {
                 tvHora.setTextSize(16);
 
                 TextView tvDescripcion = new TextView(this);
-                tvDescripcion.setText(h.getDescripcion());
+                tvDescripcion.setText("\uD83D\uDC64" + h.getDescripcion());
                 tvDescripcion.setTextSize(16);
 
                 card.addView(tvFecha);
