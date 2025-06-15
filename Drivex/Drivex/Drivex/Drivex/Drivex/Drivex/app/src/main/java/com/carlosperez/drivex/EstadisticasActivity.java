@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+// Actividad que muestra las estadísticas generales del usuario
 public class EstadisticasActivity extends AppCompatActivity {
 
     private LinearLayout statsLayout;
@@ -23,20 +24,20 @@ public class EstadisticasActivity extends AppCompatActivity {
     private AlumnoDAO alumnoDAO;
     private int idUsuario;
     private String nombreUsuario;
-    private boolean alumnosMostrados = false; // Para controlar el despliegue
+    private boolean alumnosMostrados = false; // Controla si ya se han mostrado los alumnos
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estadisticas);
-        setTitle("Estadisticas");
+        setTitle("Estadísticas");
 
         statsLayout = findViewById(R.id.statsLayout);
 
+        // Activamos las animaciones de transición al expandir las tarjetas
         LayoutTransition transition = new LayoutTransition();
         statsLayout.setLayoutTransition(transition);
         transition.enableTransitionType(LayoutTransition.CHANGING);
-
 
         horarioDAO = new HorarioDAO(this);
         alumnoDAO = new AlumnoDAO(this);
@@ -53,18 +54,21 @@ public class EstadisticasActivity extends AppCompatActivity {
         cargarEstadisticas();
     }
 
+    // Carga las estadísticas y las muestra en pantalla
     private void cargarEstadisticas() {
-        statsLayout.removeAllViews();
+        statsLayout.removeAllViews(); // Limpia el layout
 
+        // Consulta a la base de datos los distintos valores
         int totalAlumnos = alumnoDAO.obtenerTodosPorUsuario(idUsuario).size();
         int totalClases = horarioDAO.obtenerTotalClases(idUsuario);
         int clasesFuturas = horarioDAO.obtenerTotalClasesFuturas(idUsuario);
         Horario proximaClase = horarioDAO.obtenerProximaClase(idUsuario);
 
-        // CARD TOTAL ALUMNOS
+        // ------------------ CARD: Total alumnos ------------------
         CardView cardAlumnos = crearTarjeta("👨‍🎓 Total de alumnos: " + totalAlumnos);
         LinearLayout layoutAlumnos = (LinearLayout) cardAlumnos.getChildAt(0);
 
+        // Botón para mostrar lista de alumnos
         Button btnAlumnos = new Button(this);
         btnAlumnos.setText("Ver alumnos");
         btnAlumnos.setBackgroundColor(0xFF1976D2);
@@ -82,11 +86,13 @@ public class EstadisticasActivity extends AppCompatActivity {
         btnAlumnos.setLayoutParams(paramsBoton);
         layoutAlumnos.addView(btnAlumnos);
 
+        // Contenedor donde se mostrarán los alumnos cuando se pulse el botón
         LinearLayout contenedorAlumnos = new LinearLayout(this);
         contenedorAlumnos.setOrientation(LinearLayout.VERTICAL);
         layoutAlumnos.addView(contenedorAlumnos);
         statsLayout.addView(cardAlumnos);
 
+        // Al pulsar el botón muestra la lista de alumnos (solo la primera vez)
         btnAlumnos.setOnClickListener(v -> {
             if (!alumnosMostrados) {
                 mostrarListaAlumnos(contenedorAlumnos);
@@ -94,11 +100,13 @@ public class EstadisticasActivity extends AppCompatActivity {
             }
         });
 
-        // Otras estadísticas
+        // ------------------ CARD: Total de clases ------------------
         statsLayout.addView(crearTarjeta("📅 Total de clases registradas: " + totalClases));
+
+        // ------------------ CARD: Clases futuras ------------------
         statsLayout.addView(crearTarjeta("⏳ Clases próximas: " + clasesFuturas));
 
-        // PRÓXIMA CLASE en una única tarjeta
+        // ------------------ CARD: Próxima clase ------------------
         if (proximaClase != null) {
             String textoClase = "🚗 Próxima clase:\n\n" +
                     "👤 Alumno: " + proximaClase.getDescripcion() + "\n" +
@@ -110,7 +118,7 @@ public class EstadisticasActivity extends AppCompatActivity {
         }
     }
 
-
+    // Muestra la lista de alumnos en el contenedor cuando se pulsa el botón "Ver alumnos"
     private void mostrarListaAlumnos(LinearLayout contenedorAlumnos) {
         List<String> alumnos = alumnoDAO.obtenerTodosPorUsuario(idUsuario);
         for (String alumno : alumnos) {
@@ -118,6 +126,7 @@ public class EstadisticasActivity extends AppCompatActivity {
         }
     }
 
+    // Crea una tarjeta de estadísticas genérica
     private CardView crearTarjeta(String texto) {
         CardView card = new CardView(this);
         card.setRadius(24);
@@ -144,6 +153,7 @@ public class EstadisticasActivity extends AppCompatActivity {
         return card;
     }
 
+    // Crea la tarjeta de cada alumno cuando se despliega la lista
     private CardView crearTarjetaAlumno(String alumno) {
         CardView card = new CardView(this);
         card.setRadius(20);
@@ -170,6 +180,7 @@ public class EstadisticasActivity extends AppCompatActivity {
         return card;
     }
 
+    // Formatea la fecha de la BD a formato usuario (dd/MM/yyyy)
     private String formatearFecha(String fechaBD) {
         try {
             SimpleDateFormat formatoBD = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());

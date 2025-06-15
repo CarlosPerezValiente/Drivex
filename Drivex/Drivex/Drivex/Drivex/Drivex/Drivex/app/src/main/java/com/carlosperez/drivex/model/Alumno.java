@@ -1,15 +1,18 @@
 package com.carlosperez.drivex.model;
 
+// Modelo de datos para representar a un alumno
 public class Alumno {
-    private int id;
-    private String nombre;
-    private String apellidos;
-    private String dni;
-    private int idUsuario; // 🔹 Nuevo campo
+    private int id;  // ID único del alumno (clave primaria en la base de datos)
+    private String nombre;  // Nombre del alumno
+    private String apellidos;  // Apellidos del alumno
+    private String dni;  // DNI del alumno
+    private int idUsuario; // ID del usuario al que pertenece este alumno (profesor o autoescuela)
 
+    // Constructor vacío (necesario para algunas operaciones como la lectura desde la base de datos)
     public Alumno() {
     }
 
+    // Constructor completo (útil para crear objetos nuevos al insertar alumnos)
     public Alumno(String nombre, String apellidos, String dni, int idUsuario) {
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -17,7 +20,7 @@ public class Alumno {
         this.idUsuario = idUsuario;
     }
 
-    // Getters y Setters
+    // Getters y Setters para acceder y modificar los atributos
 
     public int getId() {
         return id;

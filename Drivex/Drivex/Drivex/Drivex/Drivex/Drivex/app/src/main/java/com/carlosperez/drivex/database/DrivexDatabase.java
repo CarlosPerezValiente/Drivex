@@ -33,15 +33,6 @@ public class DrivexDatabase extends SQLiteOpenHelper {
                 "id_usuario INTEGER, " +
                 "FOREIGN KEY(id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE)");
 
-        // Crear tabla clases
-        db.execSQL("CREATE TABLE clases (" +
-                "id_clase INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "id_alumno INTEGER NOT NULL, " +
-                "fecha TEXT NOT NULL, " +       // Guardar fechas como TEXT (yyyy-MM-dd)
-                "hora TEXT NOT NULL, " +        // Guardar hora como TEXT (HH:mm:ss)
-                "descripcion TEXT, " +
-                "FOREIGN KEY(id_alumno) REFERENCES alumnos(id_alumno) ON DELETE CASCADE)");
-
 
         // Crear tabla horarios
         db.execSQL("CREATE TABLE horarios (" +
@@ -58,8 +49,6 @@ public class DrivexDatabase extends SQLiteOpenHelper {
         @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Por ahora eliminar y crear de nuevo (puedes hacer migraciones cuando la DB cambie)
-        db.execSQL("DROP TABLE IF EXISTS firmas");
-        db.execSQL("DROP TABLE IF EXISTS clases");
         db.execSQL("DROP TABLE IF EXISTS horarios");
         db.execSQL("DROP TABLE IF EXISTS alumnos");
         db.execSQL("DROP TABLE IF EXISTS usuarios");

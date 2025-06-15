@@ -23,16 +23,17 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+// Actividad que gestiona los horarios de un alumno concreto
 public class HorariosActivity extends AppCompatActivity {
 
+    // Declaración de variables de interfaz
     private LinearLayout contenedorHorarios;
     private EditText etFecha, etHoraInicio, etHoraFin, etDescripcion;
     private Button btnAgregarHorario;
     private HorarioDAO horarioDAO;
-
     private AlumnoDAO alumnoDAO;
 
-    private int idAlumno;
+    private int idAlumno;  // ID del alumno al que pertenecen los horarios
     private final Calendar calendario = Calendar.getInstance();
     private final SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
@@ -40,21 +41,22 @@ public class HorariosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horarios);
-        setTitle("Horario del alumno ");
+        setTitle("Horario del alumno");
+
         alumnoDAO = new AlumnoDAO(this);
 
-
-        // Enlazar vistas
+        // Enlaza las vistas de la interfaz
         contenedorHorarios = findViewById(R.id.contenedorHorarios);
         etFecha = findViewById(R.id.etFecha);
         etHoraInicio = findViewById(R.id.etHoraInicio);
         etHoraFin = findViewById(R.id.etHoraFin);
-        etDescripcion = findViewById(R.id.etDescripcion);  // Nuevo campo
+        etDescripcion = findViewById(R.id.etDescripcion);
 
+        // Desactiva teclado manual para horas (solo seleccionables por TimePicker)
         etHoraInicio.setKeyListener(null);
         etHoraFin.setKeyListener(null);
 
-        // TimePicker para Hora de Inicio
+        // Seleccionador de Hora de Inicio
         etHoraInicio.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -65,7 +67,7 @@ public class HorariosActivity extends AppCompatActivity {
             }, hour, minute, true).show();
         });
 
-        // TimePicker para Hora de Fin
+        // Seleccionador de Hora de Fin
         etHoraFin.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -78,6 +80,7 @@ public class HorariosActivity extends AppCompatActivity {
 
         btnAgregarHorario = findViewById(R.id.btnAgregarHorario);
 
+        // Recibimos el ID del alumno al que vamos a asignar los horarios
         idAlumno = getIntent().getIntExtra("idAlumno", -1);
         if (idAlumno == -1) {
             Toast.makeText(this, "ID de alumno no recibido", Toast.LENGTH_SHORT).show();
@@ -87,6 +90,7 @@ public class HorariosActivity extends AppCompatActivity {
 
         horarioDAO = new HorarioDAO(this);
 
+        // Selector de fecha para el campo de fecha
         etFecha.setOnClickListener(v -> {
             new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
                 calendario.set(Calendar.YEAR, year);
@@ -96,6 +100,7 @@ public class HorariosActivity extends AppCompatActivity {
             }, calendario.get(Calendar.YEAR), calendario.get(Calendar.MONTH), calendario.get(Calendar.DAY_OF_MONTH)).show();
         });
 
+        // Al pulsar agregar horario
         btnAgregarHorario.setOnClickListener(v -> {
             String fecha = etFecha.getText().toString().trim();
             String inicio = etHoraInicio.getText().toString().trim();
@@ -107,12 +112,13 @@ public class HorariosActivity extends AppCompatActivity {
                 return;
             }
 
+            // Crea un nuevo objeto horario
             Horario nuevo = new Horario();
             nuevo.setIdAlumno(idAlumno);
             nuevo.setFecha(fecha);
             nuevo.setHoraInicio(inicio);
             nuevo.setHoraFin(fin);
-            nuevo.setDescripcion(descripcion);  // Guardamos la descripción
+            nuevo.setDescripcion(descripcion);
 
             boolean exito = horarioDAO.insertarHorario(nuevo);
             if (exito) {
@@ -121,7 +127,7 @@ public class HorariosActivity extends AppCompatActivity {
                 etHoraInicio.setText("");
                 etHoraFin.setText("");
                 etDescripcion.setText("");
-                cargarHorarios();
+                cargarHorarios();  // Recarga la lista de horarios
             } else {
                 Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show();
             }
@@ -130,6 +136,7 @@ public class HorariosActivity extends AppCompatActivity {
         cargarHorarios();
     }
 
+    // Método que carga los horarios del alumno y los muestra
     private void cargarHorarios() {
         contenedorHorarios.removeAllViews();
         List<Horario> lista = horarioDAO.obtenerHorariosPorAlumno(idAlumno);
@@ -170,7 +177,7 @@ public class HorariosActivity extends AppCompatActivity {
             btnExportar.setTextColor(Color.WHITE);
             GradientDrawable drawableExportar = new GradientDrawable();
             drawableExportar.setCornerRadius(30);
-            drawableExportar.setColor(0xFF388E3C); // Verde oscuro
+            drawableExportar.setColor(0xFF388E3C);
             btnExportar.setBackground(drawableExportar);
             LinearLayout.LayoutParams exportParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -180,13 +187,13 @@ public class HorariosActivity extends AppCompatActivity {
             btnExportar.setLayoutParams(exportParams);
             btnExportar.setOnClickListener(v -> exportarHorarioPDF(h));
 
-            // Botón Eliminar
+            // Botón Eliminar horario
             Button btnEliminar = new Button(this);
             btnEliminar.setText("Eliminar");
             btnEliminar.setTextColor(Color.WHITE);
             GradientDrawable drawableEliminar = new GradientDrawable();
             drawableEliminar.setCornerRadius(30);
-            drawableEliminar.setColor(0xFFD32F2F); // Rojo
+            drawableEliminar.setColor(0xFFD32F2F);
             btnEliminar.setBackground(drawableEliminar);
             LinearLayout.LayoutParams eliminarParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -200,7 +207,7 @@ public class HorariosActivity extends AppCompatActivity {
                 Toast.makeText(this, "Horario eliminado", Toast.LENGTH_SHORT).show();
             });
 
-            // Contenedor horizontal para los botones
+            // Contenedor de botones
             LinearLayout botonesLayout = new LinearLayout(this);
             botonesLayout.setOrientation(LinearLayout.HORIZONTAL);
             botonesLayout.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -217,8 +224,7 @@ public class HorariosActivity extends AppCompatActivity {
         }
     }
 
-
-
+    // Formatea fechas de BD a dd/MM/yyyy
     private String formatearFecha(String fechaBD) {
         try {
             SimpleDateFormat formatoBD = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -230,6 +236,7 @@ public class HorariosActivity extends AppCompatActivity {
         }
     }
 
+    // Exporta el horario seleccionado a un PDF
     private void exportarHorarioPDF(Horario horario) {
         PdfDocument documento = new PdfDocument();
         PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(300, 600, 1).create();
@@ -242,12 +249,11 @@ public class HorariosActivity extends AppCompatActivity {
 
         int x = 10, y = 25;
 
-
         String nombreAlumno = alumnoDAO.obtenerNombrePorId(idAlumno);
 
         canvas.drawText("Detalle de Clase:", x, y, paint);
         y += 25;
-        canvas.drawText("Alumno: " + nombreAlumno, x, y, paint);  // Añadimos el alumno
+        canvas.drawText("Alumno: " + nombreAlumno, x, y, paint);
         y += 20;
         canvas.drawText("Fecha: " + formatearFecha(horario.getFecha()), x, y, paint);
         y += 20;
@@ -270,7 +276,4 @@ public class HorariosActivity extends AppCompatActivity {
             Toast.makeText(this, "Error al exportar PDF", Toast.LENGTH_SHORT).show();
         }
     }
-
-
-
 }
