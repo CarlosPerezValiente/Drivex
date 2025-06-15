@@ -2,6 +2,8 @@ package com.carlosperez.drivex;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -136,7 +138,7 @@ public class HorariosActivity extends AppCompatActivity {
         cargarHorarios();
     }
 
-    // Método que carga los horarios del alumno y los muestra
+    // Metodo que carga los horarios del alumno y los muestra
     private void cargarHorarios() {
         contenedorHorarios.removeAllViews();
         List<Horario> lista = horarioDAO.obtenerHorariosPorAlumno(idAlumno);
@@ -187,6 +189,32 @@ public class HorariosActivity extends AppCompatActivity {
             btnExportar.setLayoutParams(exportParams);
             btnExportar.setOnClickListener(v -> exportarHorarioPDF(h));
 
+            // BOTÓN DE FIRMAR
+            Button btnFirmar = new Button(this);
+            btnFirmar.setText("Firmar");
+            btnFirmar.setTextColor(Color.WHITE);
+
+            GradientDrawable drawableFirmar = new GradientDrawable();
+            drawableFirmar.setCornerRadius(30);
+            drawableFirmar.setColor(0xFF1976D2);  // Azulito
+            btnFirmar.setBackground(drawableFirmar);
+
+            LinearLayout.LayoutParams firmarParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            firmarParams.setMargins(10, 0, 10, 0);
+            btnFirmar.setLayoutParams(firmarParams);
+
+// Acción de firmar
+            btnFirmar.setOnClickListener(v -> {
+                Intent intent = new Intent(HorariosActivity.this, FirmaActivity.class);
+                intent.putExtra("idHorario", h.getId());
+                startActivity(intent);
+            });
+
+
+
             // Botón Eliminar horario
             Button btnEliminar = new Button(this);
             btnEliminar.setText("Eliminar");
@@ -214,6 +242,8 @@ public class HorariosActivity extends AppCompatActivity {
             botonesLayout.setPadding(0, 10, 0, 0);
             botonesLayout.addView(btnExportar);
             botonesLayout.addView(btnEliminar);
+            botonesLayout.addView(btnFirmar);
+
 
             // Añadimos todo al card
             card.addView(tvFecha);
@@ -261,6 +291,25 @@ public class HorariosActivity extends AppCompatActivity {
         y += 20;
         canvas.drawText("Descripción: " + horario.getDescripcion(), x, y, paint);
 
+        y += 40;
+
+        // Intentar cargar la firma si existe
+        try {
+            File fileFirma = new File(getFilesDir(), "firma_" + horario.getId() + ".png");
+            if (fileFirma.exists()) {
+                Bitmap firma = android.graphics.BitmapFactory.decodeFile(fileFirma.getAbsolutePath());
+                Bitmap firmaEscalada = Bitmap.createScaledBitmap(firma, 100, 50, true);
+                canvas.drawText("Firma:", x, y, paint);
+                y += 20;
+                canvas.drawBitmap(firmaEscalada, x, y, null);
+            } else {
+                canvas.drawText("No se ha registrado firma.", x, y, paint);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            canvas.drawText("Error al cargar la firma", x, y, paint);
+        }
+
         documento.finishPage(pagina);
 
         try {
@@ -276,4 +325,6 @@ public class HorariosActivity extends AppCompatActivity {
             Toast.makeText(this, "Error al exportar PDF", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 }

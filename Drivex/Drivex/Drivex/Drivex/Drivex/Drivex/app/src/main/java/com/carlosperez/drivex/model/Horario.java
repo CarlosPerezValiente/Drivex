@@ -9,6 +9,9 @@ public class Horario {
     private String horaFin;  // Hora de fin de la clase
     private String descripcion;  // Descripción opcional de la clase
 
+    private String nombreAlumno;
+    private String dniAlumno;
+
     // Getter y Setter de descripción
     public String getDescripcion() {
         return descripcion;
@@ -18,6 +21,21 @@ public class Horario {
         this.descripcion = descripcion;
     }
 
+    public String getNombreAlumno() {
+        return nombreAlumno;
+    }
+
+    public void setNombreAlumno(String nombreAlumno) {
+        this.nombreAlumno = nombreAlumno;
+    }
+
+    public String getDniAlumno() {
+        return dniAlumno;
+    }
+
+    public void setDniAlumno(String dniAlumno) {
+        this.dniAlumno = dniAlumno;
+    }
     // Constructor vacío (necesario para operaciones de lectura desde la base de datos)
     public Horario() {
     }

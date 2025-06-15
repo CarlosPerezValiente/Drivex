@@ -168,11 +168,49 @@ public class HorarioDAO {
             proxima.setFecha(cursor.getString(1));
             proxima.setHoraInicio(cursor.getString(2));
             proxima.setHoraFin(cursor.getString(3));
-            // Formatea la descripción añadiendo el alumno y su DNI
-            proxima.setDescripcion(cursor.getString(4) + " | " + cursor.getString(5) + " " + cursor.getString(6) + " (" + cursor.getString(7) + ")");
+            proxima.setDescripcion(cursor.getString(4));  // SOLO la descripción de la clase
+            proxima.setNombreAlumno(cursor.getString(5) + " " + cursor.getString(6)); // nombre + apellidos
+            proxima.setDniAlumno(cursor.getString(7)); // dni
         }
         cursor.close();
         db.close();
         return proxima;
     }
+
+
+    // Total de clases pasadas (hasta hoy)
+    public int obtenerTotalClasesPasadas(int idUsuario) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT COUNT(*) FROM horarios h JOIN alumnos a ON h.id_alumno = a.id_alumno " +
+                "WHERE a.id_usuario = ? AND date(h.fecha) < date('now')";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario)});
+
+        int total = 0;
+        if (cursor.moveToFirst()) {
+            total = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return total;
+    }
+
+    // Fecha primera y última clase
+    public String[] obtenerRangoFechas(int idUsuario) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT MIN(h.fecha), MAX(h.fecha) FROM horarios h JOIN alumnos a ON h.id_alumno = a.id_alumno " +
+                "WHERE a.id_usuario = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idUsuario)});
+
+        String[] fechas = {"-", "-"};
+        if (cursor.moveToFirst()) {
+            fechas[0] = cursor.getString(0);
+            fechas[1] = cursor.getString(1);
+        }
+        cursor.close();
+        db.close();
+        return fechas;
+    }
+
 }

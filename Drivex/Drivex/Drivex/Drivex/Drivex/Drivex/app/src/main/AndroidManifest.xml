@@ -29,6 +29,8 @@
         <activity android:name=".HorariosActivity" />
         <activity android:name=".AgendaActivity" />
         <activity android:name=".EstadisticasActivity" />
+        <activity android:name=".FirmaActivity" />
+
 
 
     </application>
