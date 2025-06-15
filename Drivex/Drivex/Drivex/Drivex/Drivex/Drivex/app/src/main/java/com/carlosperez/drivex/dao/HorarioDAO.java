@@ -15,33 +15,36 @@ import java.util.List;
 import java.util.Locale;
 
 public class HorarioDAO {
+    // Helper para acceder a la base de datos
     private DrivexDatabase dbHelper;
 
+    // Constructor: inicializa el helper de la BD
     public HorarioDAO(Context context) {
         dbHelper = new DrivexDatabase(context);
     }
 
-    // Insertar horario con fecha
+    // Inserta un nuevo horario en la tabla 'horarios'
     public boolean insertarHorario(Horario horario) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
+        // Rellenamos los valores que vamos a insertar
         values.put("id_alumno", horario.getIdAlumno());
-        values.put("fecha", horario.getFecha());  // ← usamos fecha
+        values.put("fecha", horario.getFecha());  // fecha de la clase
         values.put("hora_inicio", horario.getHoraInicio());
         values.put("hora_fin", horario.getHoraFin());
         values.put("descripcion", horario.getDescripcion());
 
-
         long id = db.insert("horarios", null, values);
         db.close();
-        return id != -1;
+        return id != -1;  // Devuelve true si la inserción fue exitosa
     }
 
-    // Obtener horarios por alumno
+    // Devuelve la lista de horarios de un alumno concreto
     public List<Horario> obtenerHorariosPorAlumno(int idAlumno) {
         List<Horario> lista = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
+        // Consulta todos los horarios de ese alumno, ordenados por fecha y hora de inicio
         Cursor cursor = db.rawQuery("SELECT * FROM horarios WHERE id_alumno = ? ORDER BY fecha, hora_inicio", new String[]{String.valueOf(idAlumno)});
 
         if (cursor.moveToFirst()) {
@@ -54,7 +57,7 @@ public class HorarioDAO {
                 h.setHoraFin(cursor.getString(cursor.getColumnIndexOrThrow("hora_fin")));
                 h.setDescripcion(cursor.getString(cursor.getColumnIndexOrThrow("descripcion")));
 
-                lista.add(h);
+                lista.add(h);  // Añadimos el horario a la lista
             } while (cursor.moveToNext());
         }
 
@@ -63,13 +66,12 @@ public class HorarioDAO {
         return lista;
     }
 
-    // Agenda general por usuario
-
-
+    // Devuelve la agenda (horarios) de un usuario en una fecha concreta
     public List<Horario> obtenerAgendaPorFecha(String fecha, int idUsuario) {
         List<Horario> lista = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
+        // Consulta los horarios de los alumnos de un usuario en una fecha concreta
         String query = "SELECT h.id_horario, h.id_alumno, h.fecha, h.hora_inicio, h.hora_fin, h.descripcion, a.nombre, a.apellidos " +
                 "FROM horarios h " +
                 "JOIN alumnos a ON h.id_alumno = a.id_alumno " +
@@ -88,11 +90,11 @@ public class HorarioDAO {
                 h.setHoraFin(cursor.getString(cursor.getColumnIndexOrThrow("hora_fin")));
                 h.setDescripcion(cursor.getString(cursor.getColumnIndexOrThrow("descripcion")));
 
-                // ⚠️ Añadimos nombre y apellidos usando campos temporales:
+                // Recuperamos el nombre y apellidos del alumno
                 String nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre"));
                 String apellidos = cursor.getString(cursor.getColumnIndexOrThrow("apellidos"));
 
-                // Truquito rápido: guardamos el nombre completo dentro de la descripción temporalmente
+                // Modificamos la descripción para incluir el nombre del alumno (truco temporal)
                 h.setDescripcion("Alumno: " + nombre + " " + apellidos + "\nDescripción: " + (h.getDescripcion() == null ? "-" : h.getDescripcion()));
 
                 lista.add(h);
@@ -104,19 +106,17 @@ public class HorarioDAO {
         return lista;
     }
 
-
+    // Elimina un horario por su ID
     public boolean eliminarHorario(int idHorario) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int filasAfectadas = db.delete("horarios", "id_horario = ?", new String[]{String.valueOf(idHorario)});
         db.close();
-        return filasAfectadas > 0;
+        return filasAfectadas > 0;  // Devuelve true si eliminó algún registro
     }
 
+    // ---------- MÉTODOS DE ESTADÍSTICAS -----------
 
-
-    // MÉTODOS NUEVOS PARA ESTADÍSTICAS EN HorarioDAO
-
-    // Obtener total de clases (todas)
+    // Devuelve el número total de clases de un usuario (todas)
     public int obtenerTotalClases(int idUsuario) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery(
@@ -132,7 +132,7 @@ public class HorarioDAO {
         return total;
     }
 
-    // Obtener total de clases futuras (próximas)
+    // Devuelve el número total de clases futuras (a partir de hoy)
     public int obtenerTotalClasesFuturas(int idUsuario) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery(
@@ -149,7 +149,7 @@ public class HorarioDAO {
         return total;
     }
 
-    // Obtener la próxima clase
+    // Devuelve la próxima clase programada de un usuario
     public Horario obtenerProximaClase(int idUsuario) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery(
@@ -168,20 +168,11 @@ public class HorarioDAO {
             proxima.setFecha(cursor.getString(1));
             proxima.setHoraInicio(cursor.getString(2));
             proxima.setHoraFin(cursor.getString(3));
+            // Formatea la descripción añadiendo el alumno y su DNI
             proxima.setDescripcion(cursor.getString(4) + " | " + cursor.getString(5) + " " + cursor.getString(6) + " (" + cursor.getString(7) + ")");
         }
         cursor.close();
         db.close();
         return proxima;
     }
-
-
-
-
-
-
 }
-
-
-
-

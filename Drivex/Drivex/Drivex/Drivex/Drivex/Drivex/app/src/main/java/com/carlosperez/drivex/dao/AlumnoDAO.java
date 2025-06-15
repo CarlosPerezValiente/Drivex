@@ -12,39 +12,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlumnoDAO {
+    // Objeto que gestiona la conexión a la base de datos
     private DrivexDatabase dbHelper;
 
+    // Constructor: recibe el contexto y crea el helper de la BD
     public AlumnoDAO(Context context) {
         dbHelper = new DrivexDatabase(context);
     }
 
-    // Insertar un alumno asociado a un usuario
+    // Inserta un nuevo alumno en la tabla 'alumnos'
     public boolean insertarAlumno(Alumno alumno) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
+        // Rellenamos los campos a insertar
         values.put("nombre", alumno.getNombre());
         values.put("apellidos", alumno.getApellidos());
         values.put("dni", alumno.getDni());
-        values.put("id_usuario", alumno.getIdUsuario());  // Asociar al usuario
+        values.put("id_usuario", alumno.getIdUsuario());  // Asociación al usuario
         long id = db.insert("alumnos", null, values);
         db.close();
-        return id != -1;
+        return id != -1;  // Devuelve true si se insertó correctamente
     }
 
-    // AlumnoDAO.java
-
+    // Elimina un alumno por su ID
     public boolean eliminarAlumno(int idAlumno) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int filasAfectadas = db.delete("alumnos", "id_alumno = ?", new String[]{String.valueOf(idAlumno)});
         db.close();
-        return filasAfectadas > 0;
+        return filasAfectadas > 0; // Devuelve true si eliminó al menos una fila
     }
 
-    // Obtener alumnos de un usuario específico
+    // Obtiene la lista de alumnos de un usuario concreto (devuelve objetos Alumno)
     public List<Alumno> obtenerPorUsuario(int idUsuario) {
         List<Alumno> lista = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
+        // Consulta los alumnos cuyo id_usuario coincide
         Cursor cursor = db.rawQuery("SELECT * FROM alumnos WHERE id_usuario = ?", new String[]{String.valueOf(idUsuario)});
 
         if (cursor.moveToFirst()) {
@@ -55,7 +58,7 @@ public class AlumnoDAO {
                 alumno.setApellidos(cursor.getString(cursor.getColumnIndexOrThrow("apellidos")));
                 alumno.setDni(cursor.getString(cursor.getColumnIndexOrThrow("dni")));
                 alumno.setIdUsuario(idUsuario);
-                lista.add(alumno);
+                lista.add(alumno);  // Añadimos el alumno a la lista
             } while (cursor.moveToNext());
         }
 
@@ -64,7 +67,7 @@ public class AlumnoDAO {
         return lista;
     }
 
-
+    // Obtiene los alumnos de un usuario, pero devuelve una lista de Strings (para mostrar)
     public List<String> obtenerTodosPorUsuario(int idUsuario) {
         List<String> lista = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -73,6 +76,7 @@ public class AlumnoDAO {
 
         if (cursor.moveToFirst()) {
             do {
+                // Formateamos el string con nombre, apellidos y DNI
                 String alumno = cursor.getString(0) + " " + cursor.getString(1) + " (DNI: " + cursor.getString(2) + ")";
                 lista.add(alumno);
             } while (cursor.moveToNext());
@@ -82,6 +86,7 @@ public class AlumnoDAO {
         return lista;
     }
 
+    // Obtiene el nombre completo (nombre + apellidos) de un alumno por su ID
     public String obtenerNombrePorId(int idAlumno) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String nombre = "";
@@ -94,8 +99,4 @@ public class AlumnoDAO {
         db.close();
         return nombre;
     }
-
-
-
-
 }
