@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.carlosperez.drivex.dao.AlumnoDAO;
 import com.carlosperez.drivex.dao.HorarioDAO;
 import com.carlosperez.drivex.model.Horario;
 
@@ -27,6 +29,9 @@ public class HorariosActivity extends AppCompatActivity {
     private EditText etFecha, etHoraInicio, etHoraFin, etDescripcion;
     private Button btnAgregarHorario;
     private HorarioDAO horarioDAO;
+
+    private AlumnoDAO alumnoDAO;
+
     private int idAlumno;
     private final Calendar calendario = Calendar.getInstance();
     private final SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -36,6 +41,8 @@ public class HorariosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horarios);
         setTitle("Horario del alumno ");
+        alumnoDAO = new AlumnoDAO(this);
+
 
         // Enlazar vistas
         contenedorHorarios = findViewById(R.id.contenedorHorarios);
@@ -225,22 +232,27 @@ public class HorariosActivity extends AppCompatActivity {
 
     private void exportarHorarioPDF(Horario horario) {
         PdfDocument documento = new PdfDocument();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(300, 600, 1).create();
         PdfDocument.Page pagina = documento.startPage(pageInfo);
 
         Canvas canvas = pagina.getCanvas();
         Paint paint = new Paint();
-        paint.setTextSize(16);
+        paint.setTextSize(12);
         paint.setColor(Color.BLACK);
 
-        int x = 40, y = 50;
+        int x = 10, y = 25;
 
-        canvas.drawText("Detalle de Clase", x, y, paint);
-        y += 40;
+
+        String nombreAlumno = alumnoDAO.obtenerNombrePorId(idAlumno);
+
+        canvas.drawText("Detalle de Clase:", x, y, paint);
+        y += 25;
+        canvas.drawText("Alumno: " + nombreAlumno, x, y, paint);  // Añadimos el alumno
+        y += 20;
         canvas.drawText("Fecha: " + formatearFecha(horario.getFecha()), x, y, paint);
-        y += 30;
+        y += 20;
         canvas.drawText("Hora: " + horario.getHoraInicio() + " - " + horario.getHoraFin(), x, y, paint);
-        y += 30;
+        y += 20;
         canvas.drawText("Descripción: " + horario.getDescripcion(), x, y, paint);
 
         documento.finishPage(pagina);
@@ -258,6 +270,7 @@ public class HorariosActivity extends AppCompatActivity {
             Toast.makeText(this, "Error al exportar PDF", Toast.LENGTH_SHORT).show();
         }
     }
+
 
 
 }

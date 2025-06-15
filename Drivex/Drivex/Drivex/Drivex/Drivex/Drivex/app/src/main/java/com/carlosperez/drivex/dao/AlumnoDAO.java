@@ -82,6 +82,19 @@ public class AlumnoDAO {
         return lista;
     }
 
+    public String obtenerNombrePorId(int idAlumno) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String nombre = "";
+
+        Cursor cursor = db.rawQuery("SELECT nombre, apellidos FROM alumnos WHERE id_alumno = ?", new String[]{String.valueOf(idAlumno)});
+        if (cursor.moveToFirst()) {
+            nombre = cursor.getString(0) + " " + cursor.getString(1);
+        }
+        cursor.close();
+        db.close();
+        return nombre;
+    }
+
 
 
 
